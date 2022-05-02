@@ -56,5 +56,4 @@ public class Pecas {
 	public void setPeca(String peca) {
 		this.peca = peca;
 	}
-	
 }

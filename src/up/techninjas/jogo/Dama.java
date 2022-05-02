@@ -45,9 +45,7 @@ public class Dama {
 				colunaP = scanner.nextInt() - 1;
 
 				pecaExiste = check.checkPecaEscolhida(vez, linhaP, colunaP);
-
 			}
-
 			while (!casaCorreta) {
 				boolean dama = false;
 				System.out.println("Informe a casa de destino");
@@ -69,36 +67,45 @@ public class Dama {
 					check.checkDama(vez, casaCorreta);
 				}else {
 					casaCorreta = check.checkDestinoDama(vez, linhaP, colunaP, linhaJ, colunaJ);
-				}
-				
+				}	
 			}
 
 			gameover = check.checkPontos();
 			vencedor = check.checkVitoria(gameover);
 
-			if (vencedor != 2) {
+			if (vencedor != 3) {
 				if (vencedor == 0) {
+					System.out.println("------------------------");
 					System.out.println("Vencedor: " + jog1.getNome());
+					System.out.println("------------------------");
 				} else if (vencedor == 1) {
+					System.out.println("------------------------");
 					System.out.println("Vencedor: " + jog2.getNome());
+					System.out.println("------------------------");
+				} else {
+					System.out.println("------------------------");
+					System.out.println("O jogo empatou!");
+					System.out.println("------------------------");
 				}
 			}
-
+			// Troca a vez de jogada
 			if (vez == 0) {
 				vez = 1;
 			} else {
 				vez = 0;
 			}
-
 		} while (!gameover);
-
 	}
 
 	public void printVez() {
 		if (vez == 0) {
+			System.out.println(" ");
 			System.out.println("Vez de: " + jog1.getNome());
+			System.out.println(" ");
 		} else {
+			System.out.println(" ");
 			System.out.println("Vez de: " + jog2.getNome());
+			System.out.println(" ");
 		}
 	}
 	
@@ -113,6 +120,7 @@ public class Dama {
 		System.out.println("Informe uma opcao: ");
 		System.out.println("1 - Continuar");
 		System.out.println("2 - Encerrar");
+		op = scanner.nextInt();
 		do {
 			if (op == 1) {
 				continuar = true;

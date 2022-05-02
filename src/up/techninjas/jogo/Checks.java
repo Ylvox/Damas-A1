@@ -10,8 +10,6 @@ public class Checks {
 	Tabuleiro tab = new Tabuleiro();
 	int index, indexC;
 
-	// Fazer check de damas
-
 	public boolean checkPecaEscolhida(int vez, int i, int j) {
 
 		if (tab.checarTab(i, j) != "x") {
@@ -42,8 +40,9 @@ public class Checks {
 			// ^^^^ Checa a distancia de 1 casa
 			// Checagem de comer pecas e jogada destino do jogador1 'A'
 			if (vez == 0 && tab.checarTab(linhaJ, colunaJ) == "B") {
-				if (colunaJ > colunaP) {
-					if (linhaJ - 1 > 7 || linhaJ - 1 < 0 || colunaJ + 1 > 7) {
+				if (linhaJ < linhaP && colunaJ > colunaP) {
+					// CIMA-DIREITA
+					if (linhaJ - 1 < 0 || colunaJ + 1 > 7) {
 						destino = false;
 						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
 					} else {
@@ -56,14 +55,14 @@ public class Checks {
 							tab.setTabX(linhaP, colunaP);
 							Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 							destino = true;
-						} else {// Falta realizar checagem de pecas DAMA e se caso aja outra inimiga pra comer
+						} else {
 							System.out.println("Apenas damas podem comer + de uma peca por jogada");
 							destino = false;
 						}
 					}
-
-				} else if (colunaJ < colunaP) {
-					if (linhaJ - 1 > 7 || linhaJ - 1 < 0 || colunaJ - 1 < 0) {
+				} else if (linhaJ < linhaP && colunaJ < colunaP) {
+					// CIMA-ESQUERDA
+					if (linhaJ - 1 < 0 || colunaJ - 1 < 0) {
 						destino = false;
 						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
 					} else {
@@ -81,41 +80,106 @@ public class Checks {
 							destino = false;
 						}
 					}
-
-				}
-			} else if (vez == 0 && tab.checarTab(linhaJ, colunaJ) == "A") {
-				System.out.println("Voce nao pode comer a propria peca!");
-				destino = false;
-			} else if (vez == 0 && tab.checarTab(linhaJ, colunaJ) == "x") {
-				index = checkIndex(linhaP, colunaP, "A");
-				tab.setTabJogada(linhaJ, colunaJ, index, vez);
-				tab.setTabX(linhaP, colunaP);
-				destino = true;
-			}
-			// Checagem de comer pecas e jogada destino do jogador2 'B'
-			if (vez == 1 && tab.checarTab(linhaJ, colunaJ) == "A") {
-				if (colunaJ > colunaP) {
-					if (linhaJ + 1 > 7 || linhaJ - 1 < 0 || colunaJ + 1 > 7) {
+				} else if (linhaJ > linhaP && colunaJ < colunaP) {
+					// BAIXO-ESQUERDA
+					if (linhaJ + 1 > 7 || colunaJ - 1 < 0) {
+						destino = false;
+						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
+					} else {
+						if (tab.checarTab(linhaJ + 1, colunaJ - 1) == "x") {
+							index = checkIndex(linhaP, colunaP, "A");
+							indexC = checkIndexComido(linhaJ, colunaJ);
+							tab.setTabJogada(linhaJ + 1, colunaJ - 1, index, vez);
+							tab.setTabX(linhaJ, colunaJ);
+							removerPeca(indexC);
+							tab.setTabX(linhaP, colunaP);
+							Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
+							destino = true;
+						} else {
+							System.out.println("Apenas damas podem comer + de uma peca por jogada");
+							destino = false;
+						}
+					}
+				} else if (linhaJ > linhaP && colunaJ > colunaP) {
+					// BAIXO-DIREITA
+					if (linhaJ + 1 > 7 || colunaJ + 1 > 7) {
 						destino = false;
 						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
 					} else {
 						if (tab.checarTab(linhaJ + 1, colunaJ + 1) == "x") {
-							index = checkIndex(linhaP, colunaP, "B");
+							index = checkIndex(linhaP, colunaP, "A");
 							indexC = checkIndexComido(linhaJ, colunaJ);
 							tab.setTabJogada(linhaJ + 1, colunaJ + 1, index, vez);
 							tab.setTabX(linhaJ, colunaJ);
 							removerPeca(indexC);
 							tab.setTabX(linhaP, colunaP);
-							Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
+							Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 							destino = true;
-						} else {// Falta realizar checagem de pecas DAMA e se caso aja outra inimiga pra comer
+						} else {
 							System.out.println("Apenas damas podem comer + de uma peca por jogada");
 							destino = false;
 						}
 					}
-
-				} else if (colunaJ < colunaP) {
-					if (linhaJ + 1 > 7 || linhaJ - 1 < 0 || colunaJ - 1 < 0) {
+				}
+			} else if (vez == 0 && tab.checarTab(linhaJ, colunaJ) == "A") {
+				System.out.println("Voce nao pode comer a propria peca!");
+				destino = false;
+			} else if (vez == 0 && tab.checarTab(linhaJ, colunaJ) == "x") {
+				if(linhaJ > linhaP) {
+					destino = false;
+					System.out.println("Voce nao pode andar para tras!");
+				}else {
+					index = checkIndex(linhaP, colunaP, "A");
+					tab.setTabJogada(linhaJ, colunaJ, index, vez);
+					tab.setTabX(linhaP, colunaP);
+					destino = true;
+				}
+			}
+			// Checagem de comer pecas e jogada destino do jogador2 'B'
+			if (vez == 1 && tab.checarTab(linhaJ, colunaJ) == "A") {
+				if (linhaJ < linhaP && colunaJ > colunaP) {
+					// CIMA-DIREITA
+					if (linhaJ - 1 < 0 || colunaJ + 1 > 7) {
+						destino = false;
+						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
+					} else {
+						if (tab.checarTab(linhaJ - 1, colunaJ + 1) == "x") {
+							index = checkIndex(linhaP, colunaP, "B");
+							indexC = checkIndexComido(linhaJ, colunaJ);
+							tab.setTabJogada(linhaJ - 1, colunaJ + 1, index, vez);
+							tab.setTabX(linhaJ, colunaJ);
+							removerPeca(indexC);
+							tab.setTabX(linhaP, colunaP);
+							Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
+							destino = true;
+						} else {
+							System.out.println("Apenas damas podem comer + de uma peca por jogada");
+							destino = false;
+						}
+					}
+				} else if (linhaJ < linhaP && colunaJ < colunaP) {
+					// CIMA-ESQUERDA
+					if (linhaJ - 1 < 0 || colunaJ - 1 < 0) {
+						destino = false;
+						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
+					} else {
+						if (tab.checarTab(linhaJ - 1, colunaJ - 1) == "x") {
+							index = checkIndex(linhaP, colunaP, "B");
+							indexC = checkIndexComido(linhaJ, colunaJ);
+							tab.setTabJogada(linhaJ - 1, colunaJ - 1, index, vez);
+							tab.setTabX(linhaJ, colunaJ);
+							removerPeca(indexC);
+							tab.setTabX(linhaP, colunaP);
+							Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
+							destino = true;
+						} else {
+							System.out.println("Apenas damas podem comer + de uma peca por jogada");
+							destino = false;
+						}
+					}
+				} else if (linhaJ > linhaP && colunaJ < colunaP) {
+					// BAIXO-ESQUERDA
+					if (linhaJ + 1 > 7 || colunaJ - 1 < 0) {
 						destino = false;
 						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
 					} else {
@@ -128,22 +192,45 @@ public class Checks {
 							tab.setTabX(linhaP, colunaP);
 							Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
 							destino = true;
-						} else {// Falta realizar checagem de pecas DAMA e se caso aja outra inimiga pra comer
+						} else {
 							System.out.println("Apenas damas podem comer + de uma peca por jogada");
 							destino = false;
 						}
 					}
-
+				} else if (linhaJ > linhaP && colunaJ > colunaP) {
+					// BAIXO-DIREITA
+					if (linhaJ + 1 > 7 || colunaJ + 1 > 7) {
+						destino = false;
+						System.out.println("Voce nao pode comer essa peca pois nao ha espaco para a sua!");
+					} else {
+						if (tab.checarTab(linhaJ + 1, colunaJ + 1) == "x") {
+							index = checkIndex(linhaP, colunaP, "B");
+							indexC = checkIndexComido(linhaJ, colunaJ);
+							tab.setTabJogada(linhaJ + 1, colunaJ + 1, index, vez);
+							tab.setTabX(linhaJ, colunaJ);
+							removerPeca(indexC);
+							tab.setTabX(linhaP, colunaP);
+							Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
+							destino = true;
+						} else {
+							System.out.println("Apenas damas podem comer + de uma peca por jogada");
+							destino = false;
+						}
+					}
 				}
-
 			} else if (vez == 1 && tab.checarTab(linhaJ, colunaJ) == "B") {
 				System.out.println("Voce nao pode comer a propria peca!");
 				destino = false;
 			} else if (vez == 1 && tab.checarTab(linhaJ, colunaJ) == "x") {
-				index = checkIndex(linhaP, colunaP, "B");
-				tab.setTabJogada(linhaJ, colunaJ, index, vez);
-				tab.setTabX(linhaP, colunaP);
-				destino = true;
+				if(linhaJ < linhaP) {
+					destino = false;
+					System.out.println("Voce nao pode andar para tras!");
+				}else {
+					index = checkIndex(linhaP, colunaP, "B");
+					tab.setTabJogada(linhaJ, colunaJ, index, vez);
+					tab.setTabX(linhaP, colunaP);
+					destino = true;
+				}
 			}
 		} else {
 			destino = false;
@@ -162,6 +249,7 @@ public class Checks {
 		if (linhaJ > 7 || linhaJ < 0 || colunaJ > 7 || colunaJ < 0) {
 			destino = false;
 			System.out.println("Informe um destino com linhas e colunas entre 1 e 8");
+			// Checa o tipo de diagonal de destino e se esta dentro dela
 			// CIMA ESQUERDA
 		} else if (linhaJ < linhaP && colunaJ < colunaP) {
 			for (int i = linhaP, j = colunaP; i >= 0 && j >= 0; i--, j--) {
@@ -179,7 +267,7 @@ public class Checks {
 				System.out.println("Voce so pode andar dentro da diagonal!");
 			}
 			// BAIXO DIREITA
-		} else if (linhaJ < linhaP && colunaJ < colunaP) {
+		} else if (linhaJ > linhaP && colunaJ > colunaP) {
 			for (int i = linhaP, j = colunaP; i < 8 && j < 8; i++, j++) {
 				if (i == linhaJ && j == colunaJ) {
 					diagOk = true;
@@ -195,7 +283,7 @@ public class Checks {
 				System.out.println("Voce so pode andar dentro da diagonal!");
 			}
 			// BAIXO ESQUERDA
-		} else if (linhaJ < linhaP && colunaJ < colunaP) {
+		} else if (linhaJ > linhaP && colunaJ < colunaP) {
 			for (int i = linhaP, j = colunaP; i < 8 && j >= 0; i++, j--) {
 				if (i == linhaJ && j == colunaJ) {
 					diagOk = true;
@@ -211,7 +299,7 @@ public class Checks {
 				System.out.println("Voce so pode andar dentro da diagonal!");
 			}
 			// CIMA DIREITA
-		} else if (linhaJ < linhaP && colunaJ < colunaP) {
+		} else if (linhaJ < linhaP && colunaJ > colunaP) {
 			for (int i = linhaP, j = colunaP; i >= 0 && j < 8; i--, j++) {
 				if (i == linhaJ && j == colunaJ) {
 					diagOk = true;
@@ -227,13 +315,14 @@ public class Checks {
 				System.out.println("Voce so pode andar dentro da diagonal!");
 			}
 		}
+		// Checa o destino para comer e andar com a peca apos ter validado a diagonal
 		if (diagOk && destino) {
 			index = -1;
 			if (vez == 0) {
 				if (tab.checarTab(linhaJ, colunaJ) == "x") {
 					switch (tipoDiag) {
 					case 1: {
-						for (int i = linhaP - 1, j = colunaP - 1; i >= 0 && j >= 0; i--, j--) {
+						for (int i = linhaP - 1, j = colunaP - 1; i >= linhaJ && j >= colunaJ; i--, j--) {
 							if(tab.checarTab(i , j) == "A") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -241,22 +330,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP - 1, j = colunaP - 1; i >= 0 && j >= 0; i--, j--) {
-								index = checkIndex(linhaP, colunaP, "A");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP - 1, j = colunaP - 1; i >= linhaJ && j >= colunaJ; i--, j--) {
 								if(tab.checarTab(i, j) == "B") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "A");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 2: {
-						for (int i = linhaP + 1, j = colunaP + 1; i < 8 && j < 8; i++, j++) {
+						for (int i = linhaP + 1, j = colunaP + 1; i <= linhaJ && j <= colunaJ; i++, j++) {
 							if(tab.checarTab(i, j) == "A") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -264,22 +354,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP + 1, j = colunaP + 1; i < 8 && j < 8; i++, j++) {
-								index = checkIndex(linhaP, colunaP, "A");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP + 1, j = colunaP + 1; i <= linhaJ && j <= colunaJ; i++, j++) {
 								if(tab.checarTab(i, j) == "B") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "A");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 3: {
-						for (int i = linhaP + 1, j = colunaP - 1; i < 8 && j >= 0; i++, j--) {
+						for (int i = linhaP + 1, j = colunaP - 1; i <= linhaJ && j >= colunaJ; i++, j--) {
 							if(tab.checarTab(i, j) == "A") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -287,22 +378,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP + 1, j = colunaP - 1; i < 8 && j >= 0; i++, j--) {
-								index = checkIndex(linhaP, colunaP, "A");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP + 1, j = colunaP - 1; i <= linhaJ && j >= colunaJ; i++, j--) {
 								if(tab.checarTab(i, j) == "B") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "A");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 4: {
-						for (int i = linhaP - 1, j = colunaP + 1; i >= 0 && j < 8; i--, j++) {
+						for (int i = linhaP - 1, j = colunaP + 1; i >= linhaJ && j <= colunaJ; i--, j++) {
 							if(tab.checarTab(i, j) == "A") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -310,17 +402,18 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP - 1, j = colunaP + 1; i >= 0 && j < 8; i--, j++) {
-								index = checkIndex(linhaP, colunaP, "A");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP - 1, j = colunaP + 1; i >= linhaJ && j <= colunaJ; i--, j++) {
 								if(tab.checarTab(i, j) == "B") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog1.setPontos(Dama.jog1.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "A");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
@@ -328,12 +421,15 @@ public class Checks {
 						System.out.println("Alguma merda deu");
 						break;
 					}
+				}else {
+					destino = false;
+					System.out.println("Jogue em uma casa vazia!");
 				}
 			} else if(vez == 1){
 				if (tab.checarTab(linhaJ, colunaJ) == "x") {
 					switch (tipoDiag) {
 					case 1: {
-						for (int i = linhaP - 1, j = colunaP - 1; i >= 0 && j >= 0; i--, j--) {
+						for (int i = linhaP - 1, j = colunaP - 1; i >= linhaJ && j >= colunaJ; i--, j--) {
 							if(tab.checarTab(i, j) == "B") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -341,22 +437,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP - 1, j = colunaP - 1; i >= 0 && j >= 0; i--, j--) {
-								index = checkIndex(linhaP, colunaP, "B");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP - 1, j = colunaP - 1; i >= linhaJ && j >= colunaJ; i--, j--) {
 								if(tab.checarTab(i, j) == "A") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "B");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 2: {
-						for (int i = linhaP + 1, j = colunaP + 1; i < 8 && j < 8; i++, j++) {
+						for (int i = linhaP + 1, j = colunaP + 1; i <= linhaJ && j <= colunaJ; i++, j++) {
 							if(tab.checarTab(i, j) == "B") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -364,22 +461,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP + 1, j = colunaP + 1; i < 8 && j < 8; i++, j++) {
-								index = checkIndex(linhaP, colunaP, "B");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP + 1, j = colunaP + 1; i <= linhaJ && j <= colunaJ; i++, j++) {
 								if(tab.checarTab(i, j) == "A") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "B");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 3: {
-						for (int i = linhaP + 1, j = colunaP - 1; i < 8 && j >= 0; i++, j--) {
+						for (int i = linhaP + 1, j = colunaP - 1; i <= linhaJ && j >= colunaJ; i++, j--) {
 							if(tab.checarTab(i, j) == "B") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -387,22 +485,23 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP + 1, j = colunaP - 1; i < 8 && j >= 0; i++, j--) {
-								index = checkIndex(linhaP, colunaP, "B");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP + 1, j = colunaP - 1; i <= linhaJ && j >= colunaJ; i++, j--) {
 								if(tab.checarTab(i, j) == "A") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "B");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
 					case 4: {
-						for (int i = linhaP - 1, j = colunaP + 1; i >= 0 && j < 8; i--, j++) {
+						for (int i = linhaP - 1, j = colunaP + 1; i >= linhaJ && j <= colunaJ; i--, j++) {
 							if(tab.checarTab(i, j) == "B") {
 								destino = false;
 								System.out.println("Tem uma peca sua no meio");
@@ -410,17 +509,18 @@ public class Checks {
 							}
 						}
 						if(destino) {
-							for (int i = linhaP - 1, j = colunaP + 1; i >= 0 && j < 8; i--, j++) {
-								index = checkIndex(linhaP, colunaP, "B");
-								tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							for (int i = linhaP - 1, j = colunaP + 1; i >= linhaJ && j <= colunaJ; i--, j++) {
 								if(tab.checarTab(i, j) == "A") {
 									indexC = checkIndexComido(i, j);
 									removerPeca(indexC);
 									Dama.jog2.setPontos(Dama.jog2.getPontos() + 1);
 									tab.setTabX(i, j);
-									tab.setTabX(linhaP, colunaP);
 								}
 							}
+							index = checkIndex(linhaP, colunaP, "B");
+							//System.out.println(index);
+							tab.setTabJogada(linhaJ, colunaJ, index, vez);
+							tab.setTabX(linhaP, colunaP);
 						}
 						break;
 					}
@@ -428,6 +528,9 @@ public class Checks {
 						System.out.println("Alguma merda deu");
 						break;
 					}
+				}else {
+					destino = false;
+					System.out.println("Jogue em uma casa vazia!");
 				}
 			}
 		}
@@ -481,7 +584,9 @@ public class Checks {
 			gameover = true;
 		} else if (Dama.jog2.getPontos() == 12) {
 			gameover = true;
-		} else {
+		} else if(Dama.jog1.getPontos() == 11 && Dama.jog2.getPontos() == 11){
+			gameover = true;
+		}else {
 			gameover = false;
 		}
 		return gameover;
@@ -494,9 +599,11 @@ public class Checks {
 				vencedor = 0;
 			} else if (Dama.jog2.getPontos() == 12) {
 				vencedor = 1;
+			} else if(Dama.jog1.getPontos() == 11 && Dama.jog2.getPontos() == 11) {
+				vencedor = 2;
 			}
 		} else {
-			vencedor = 2;
+			vencedor = 3;
 		}
 		return vencedor;
 	}
@@ -505,6 +612,10 @@ public class Checks {
 		for (Pecas peca : Tabuleiro.peca) {
 			if (peca.getPeca().equals(jogador) && peca.getLinha() == linha && peca.getColuna() == coluna) {
 				index = peca.getIndex();
+			}else if(peca instanceof Damas) {
+				if(((Damas)peca).getPeca().equals(jogador) && ((Damas)peca).getLinha() == linha && ((Damas)peca).getColuna() == coluna) {
+					index = ((Damas)peca).getIndex();
+				}
 			}
 		}
 		return index;
@@ -523,5 +634,4 @@ public class Checks {
 		Tabuleiro.peca.remove(index);
 		tab.setIndex();
 	}
-
 }

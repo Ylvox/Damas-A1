@@ -14,18 +14,21 @@ public class Main {
 		
 		do {
 			tabuleiro.criarPecas();
-			/*	TESTE FOR EACH COM ARRAY DE OUTRA CLASSE
-			for(Pecas pecas: tabuleiro.peca) {
-				System.out.println(pecas.getIndex() + " " + pecas.getPeca());
-			}
-			*/
-			Tabuleiro.printIndex();
+			// Tabuleiro.printIndex(); <- PARA TESTES
 			tabuleiro.criarTab();
 			jogo.jogar();
 			continuar = jogo.continuar();
-			
-		}while(continuar);
-			
+		}while(continuar);	
 	}
-
 }
+/*
+ * EQUIPE Techninjas
+ * 
+ * Nathan P.
+ * Lucas Z.
+ * Monica
+ * Kaio
+ * Bernardo
+ * 
+ */
+

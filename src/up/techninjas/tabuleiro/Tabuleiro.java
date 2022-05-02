@@ -2,7 +2,6 @@ package up.techninjas.tabuleiro;
 
 import java.util.ArrayList;
 
-import up.techninjas.pecas.Damas;
 //import up.techninjas.pecas.Damas;
 import up.techninjas.pecas.Pecas;
 
@@ -61,11 +60,9 @@ public class Tabuleiro {
 				tabuleiro[peca.getLinha()][peca.getColuna()] = "B";
 			}
 		}
-		
 	}
 	
 	public static void printTab() {
-		
 		int linhas;
 		
 		System.out.println("\n     1 2 3 4 5 6 7 8");
@@ -84,7 +81,7 @@ public class Tabuleiro {
 		}
 		System.out.println("   -------------------");
 		System.out.println("     1 2 3 4 5 6 7 8\n");
-		printIndex();
+		//printIndex(); <-- PARA TESTES
 	}
 	
 	public String checarTab(int i, int j) {
@@ -93,36 +90,13 @@ public class Tabuleiro {
 	
 	public void setTabJogada(int i, int j, int index, int vez) {
 		if(vez == 0) {
-			for(Pecas peca: peca) {
-				if(peca instanceof Damas) {
-					if(((Damas)peca).getIndex() == index) {
-						((Damas)peca).setLinha(i);
-						((Damas)peca).setLinha(j);
-						tabuleiro[((Damas)peca).getLinha()][((Damas)peca).getColuna()] = "A";
-					}
-				}else if(peca.getIndex() == index && peca instanceof Pecas) {
-					peca.setLinha(i);
-					peca.setColuna(j);
-					tabuleiro [peca.getLinha()][peca.getColuna()] = "A";
-					break;
-				}
-			}
-			
+			peca.get(index).setLinha(i);
+			peca.get(index).setColuna(j);
+			tabuleiro[peca.get(index).getLinha()][peca.get(index).getColuna()] = "A";
 		}else if(vez == 1) {
-			for(Pecas peca: peca) {
-				if(peca instanceof Damas) {
-					if(((Damas)peca).getIndex() == index) {
-						((Damas)peca).setLinha(i);
-						((Damas)peca).setLinha(j);
-						tabuleiro[((Damas)peca).getLinha()][((Damas)peca).getColuna()] = "B";
-					}
-				}else if(peca.getIndex() == index && peca instanceof Pecas) {
-					peca.setLinha(i);
-					peca.setColuna(j);
-					tabuleiro [peca.getLinha()][peca.getColuna()] = "B";
-					break;
-				}
-			}
+			peca.get(index).setLinha(i);
+			peca.get(index).setColuna(j);
+			tabuleiro[peca.get(index).getLinha()][peca.get(index).getColuna()] = "B";
 		}
 	}
 	public void setTabX(int i, int j) {
@@ -136,5 +110,4 @@ public class Tabuleiro {
 			index++;
 		}
 	}
-	
 }

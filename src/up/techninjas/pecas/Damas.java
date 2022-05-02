@@ -21,6 +21,4 @@ public class Damas extends Pecas{
 	public String toString() {
 		return super.toString() + " " + status;
 	}
-
-	
 }
